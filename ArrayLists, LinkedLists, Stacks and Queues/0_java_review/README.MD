@@ -488,8 +488,133 @@ In this course we will mostly just use a for-each loop to iterate through Java c
 
 ### Comparable and Comparator
 
+**Comparable** and **Comparator**, unlike **iterator** and **iterable** are completely separate and do not rely on each other.
+
+```java
+public int compare(T x, T y);
+//...
+comp.compare(x,y)
+```
+
+x<y returns negative
+
+x=y returns zero
+
+x>y returns positive
+
+```java
+public class HDTV implements Comparable<HDTV> {
+    private int size;
+    private String brand;
+    public int GetSize() {return size;}
+    public String getBrand() {return brand;}
+
+    public int compareTo(HDTV tv){
+        if (size < tv.size) {return -1;}
+        else if (size > tv.size) {return 1;}
+        else {return 0}
+    }
+}
+```
+
+1. Implement `Comparable` interface
+2. Overwrite `CompareTo()` method
+3. Decide what metric to compare on, we chose size in the example
+
+You can also simplify the code without verifying the `CompareTo()` method.
+
+```java
+public class HDTV implements Comparable<HDTV> {
+    private int size;
+    private String brand;
+    public int GetSize() {return size;}
+    public String getBrand() {return brand;}
+
+    public int compareTo(HDTV tv){
+        return size - tv.size;
+    }
+}
+```
+
+What if we want to compare objects but we can't make the objects comparable? We can use `Comparator`.
+
+```java
+import java.util.Comparator;
+public class HDTV {
+    private int size;
+    private String brand;
+    public int GetSize() {return size;}
+    public String getBrand() {return brand;}
+}
+
+class SizeComparator implements Comparator<HDTV> {
+    public int compare(HDTV tv1, HDTV tv2) {
+        return tv1.getSize() - tv2.getSize();
+    }
+}
+
+```
+
+Another example of implementing `Comparable`:
+
+```java
+public class MenuItem implements Comparable<MenuItem> {
+    private String name;
+    private int price;
+
+    public MenuItem(String name, int price) { ... }
+
+    public int compareTo(MenuItem otherItem) {
+        return this.price - otherItem.getPrice();
+    }
+}
+```
+
 ## Big-O Concepts
 
 ### Motivation and Definitions
 
+- Big-O measures both time and space efficiency
+
+- Platform and hardware independent
+
+- High level description of algorithm
+
+- Performance scales in relation to the input sizes
+
+- Quantifying the time complexity of the algorithm in terms of the input size
+
+Primitive operations execute in constant time, i.e. assigning values, arithmetic operations, etc. If we count the number of these operations and how many times they execute, this correlates to the runtime.
+
+**f(n)** represents the function of primitive operations of an input of size n.
+
+Worst case scenario - the algorithm runs with the worst set of data
+
+Best case scenario - the algorithm runs with the best set of data
+
+Average case scenario - Somewhere in between best and worst case
+
+**O(f(n))** represents Big-O notation. This typically represents the worst case scenario.
+
+In this course we will use **O(n^4)** but there are other measures like little o, omega, theta, etc.
+
 ### Conventions and Examples
+
+Conventions:
+
+- Drop constant factors
+    - O(5n) -> O(n)
+    - O(0.5n^2) -> O(n^2)
+- Drop lower order terms
+    - O(n^2 + 1000n -3) -> O(n^2)
+    - O(3n + 2log(n) + nlog(n)) -> O(nlog(n))
+
+Examples:
+
+- O(1) - Constant complexity
+    - Given an array of length n return 1st element
+- O(n) - Linear complexity
+    - Given an array of length n, summing up all elements in the array
+- O(log(n)) - Logarithmic complexity
+    - Given a sorted array of length n, performing a binary search
+
