@@ -89,8 +89,25 @@ Adding to an arbitrary index is O(n) because we have to shift data to keep conti
 
 Removing from the back is O(1) but removing from an arbitrary point again requires a data shift which is O(n) due to shifting.
 
-
 ### Amortized Analysis
+
+**Amortization** referes to the spread of cost overtime. As mentioned previously the operation cost O(1) is the standard with the occasionally O(n). The concept of amortization is important because it more accurately depicts the average cost over time.
+
+![](/ArrayLists,%20LinkedLists,%20Stacks%20and%20Queues/1_arrays_arraylists/images/AmortizedCost.png)
+
+When adding to the back there can be a resize (O(n)) or not (O(1)).
+
+Generally when we resize we double the capacity. A resize occurrs when the size n was euqal to the capacity. 
+
+The formula dictates the worst case scenario of time complexity to adding tot he back of an ArrayList is either O(n) or amortized O(1) they are both correct. Sometimes **O(1)*** is used for amortization.
+
+There is also a distinction between **hard removals** and **soft removals**. 
+
+**hard removal** - data is completely removed from the data structure.
+
+**soft removal** - leave the data in the data structure, for example `ArrayList` can be controlled by **size** variable so you may not necessarily need a hard removal of data at the end since **size** will take care of it.
+
+**We will be using hard removal unless explicitly stated otherwise.**
 
 ## Recursion
 
