@@ -111,3 +111,68 @@ There is also a distinction between **hard removals** and **soft removals**.
 
 ## Recursion
 
+For a method to be recursive if must have the following requirements:
+
+- Base case(s): termination condition(s) that ensure all branches of recursion stop eventually
+- Recursive case(s): method calls to itself
+- Progress to base case: each recursive call must move towards the base case in some way
+
+```java
+public return_type recursiveEx(param_1, ..., param_n) {
+    if (base_case1) {
+        // termination logic for base case 1
+    } 
+    else if (base_case2) {
+        // termination logic for base case 2
+    } 
+    // ... other base cases if necessary
+    else {
+        // logic for setting up recursive calls
+        return recursiveEx(newParam_1, ..., newParam_n)
+    }
+}
+```
+
+- Generally it is easiest to identify the base case and write those out first.
+- Ensure base cases do not overlap if possible.
+
+Euclidean Algorithm for Greatest Common Divisor, GCD:
+- finding the greatest common divisor of two or more integers, x and y, where x and y are not both zero, is the largest integer dividing both x and y with no remainder.
+- There are multiple ways to solve the GCD problem.
+    - Subtraction-based where the smaller is subtracted from the larger repeatedly
+    - Division-based where larger is divided by the smaller and remainder is kept
+    - Divide both numbers by 2 and track binary division count
+
+The modulo division-based solution is what we will demo because it is the most efficient.
+
+Given x>y, then:
+- x = q * y + r
+- r = x mod y
+- y > r
+
+Rcursive case:
+- gcd(x,y) = gcd(y,r)
+
+Base case:
+- gcd(z,0) return z
+
+```
+gcd(1482, 819) -> 1482 % 819 = 663
+gcd(819, 663) -> 819 % 663 = 156
+gcd(663, 156) -> 663 % 156 = 39
+gcd(156, 39) -> 156 % 39 = 0
+gcd(39,0) -> 39
+```
+
+```java
+public int gcd(int x, int y) {
+    if (y == 0) { // base case
+        return x;
+    }
+    else { // recursive call
+        int remainder = x % y;
+        return gcd(y, remainder);
+    }
+}
+
+```
