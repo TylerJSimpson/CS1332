@@ -124,4 +124,91 @@ Node<T> temp = new Node<>(data);
 
 ## LinkedLists in Code
 
+One problem with LinkedLists is that we cannot simply use indexes to access elements, we must loop through the data.
+
+Previously we used while loops to iterate through the data structure, but we can implement Iterable.
+
+```java
+import java.util.Iterator;
+public class LinkedList<T> implements Iterable<T> {
+    // Other methods omitted
+    public Iterator<T> iterator() {
+        return new LLIterator<>();
+    }
+
+    private class LLIterator implements Iterator<T> {
+        private Node<T> curr;
+        LLIterator () {
+            curr = head;
+        }
+        public boolean hasNext() { // Recall hasNext and next are required to implement Iterator
+            return curr != null;
+        }
+        public T next() {// Recall hasNext and next are required to implement Iterator
+            if (hasNext())  {
+                T temp = curr.data;
+                curr = curr.next;
+                return temp;
+            }
+            return null;
+        }
+    }
+}
+```
+
+Using the iterator:
+
+```java
+LinkedList<String> courses = new LinkedList<>();
+// Assume this list has elements despite it not being stated here
+
+// To access each element you can setup a foreach loop
+for (String course : courses) {
+    // Accesses each course but course cannot be modified in this case
+}
+
+Iterator<String> courseIt = courses.iterator();
+while (courseIt.hasNext()) {
+    String data = courseIt.next()
+    // More control over each step
+}
+```
+
+The for-each method is great for quick access but the limitation is that it cannot be used to modify the list or the data itself.
+
+Let us look at an example of using recursion in a singly linked list.
+
+Assume all data elements are in sorted order such that duplicates are contiguous and there is a `head` reference but no tail reference.
+
+We need to write a function that recursively removes all duplicate nodes from the linked list.
+
+```java
+// first we create public wrapper method for users to call
+public void removeDuplicates() {
+    head = rRemove(head);
+}
+
+
+private Node<T> rRemove(Node<T> curr) { // Recursive method with the parameter for current node to examine
+    if (curr == null) { // simple base case checking if end of list has been reached
+        return null;
+    }
+    curr.next = rRemove(curr.next); // if not null set current to next
+    if (curr.next != null && curr.data.equals(curr.next.data) {
+        return curr.next // if current data = next data return only the next data
+    })
+    return curr; // return current if no duplicate was present
+}
+```
+
+One way to think of this at a high level is that our step is to recursively make smaller and smaller sublists. In this way the `Node` that is passed in represents the head of the smaller new sublist.
+
+In this situation the base case is simply passing in an empty list.
+
+In the actual recusrive call we use the concept of **pointer reinforcement** where the return field is used to restructure and relink nodes. The code *reinforces* the link that was already here if nothing changes in the structure.
+
+Essentially we are breaking off the node and comparing it to the next node's data. If the data is equal then we have a duplicate to remove. If the data is not euqal then we relink the list as normal.
+
+If you want to remove the current node you just need to return the node after it (next) since the recursion links the current node to what is returned. If you don't want to remove the current node then just return the current node and it will be relinked. 
+
 ## Variations of LinkedLists
