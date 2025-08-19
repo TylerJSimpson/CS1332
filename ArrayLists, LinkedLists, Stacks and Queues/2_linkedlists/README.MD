@@ -5,6 +5,8 @@
 - [Singly-Linked Lists](#singly-linked-lists)
 - [LinkedLists in Code](#linkedlists-in-code)
 - [Variations of LinkedLists](#variations-of-linkedlists)
+    - [Doubly-Linked Lists (DLL)](#doubly-linked-lists-dll)
+    - [Circularly-Linked Lists (CLL)](#circularly-linked-lists-cll)
 
 ## Singly-Linked Lists
 
@@ -212,3 +214,93 @@ Essentially we are breaking off the node and comparing it to the next node's dat
 If you want to remove the current node you just need to return the node after it (next) since the recursion links the current node to what is returned. If you don't want to remove the current node then just return the current node and it will be relinked. 
 
 ## Variations of LinkedLists
+
+### Doubly-Linked Lists (DLL)
+
+**Doubly-Linked Lists (DLL)** are essentially **SLL** with a `previous` reference so that they can be traversed in either direction.
+
+DLL almost always have a `head` and `tail` pointer as well.
+
+They require extra memory usage in exchange for better time efficiency.
+
+Adding to a DLL has similar edge cases to SLL of size 0 and 1. When it is empty both the `head` and `tail` are null. When there is 1 node both the `head` and `tail` should point to this node.
+
+**Adding to the front:**
+- Create the new node
+- Set the new node's next point to the head
+- set the head's previous pointer to the new node
+- set head to the new node
+
+**Adding to the back:**
+- Create the new node
+- Set the new node's previous pointer to the tail
+- Set the tail's next pointer to the new node
+- Set the tail to the new node
+
+Recall we could not remove from the back in O(1) with an SLL, now we can with a DLL.
+
+**Removing from the back**
+- O(1) achieved by using the `previous` pointer of the tail
+
+**Edge cases**
+- Removing from a list of size 1
+- head and tail will both need to null to effectively remove the single node
+
+### Circularly-Linked Lists (CLL)
+
+Similarly to **DLL** except in **CLL** the `head` and `tail` nodes connect to eachother instead of a null reference.
+
+Usually does not include a tail pointer.
+
+Instead of looping until the `current.next` is null we now need to loop until it is the head.
+
+You can singly our doubly link a CLL. 
+
+**Adding to the front:**
+- Create a new empty node
+- Add the new node at index 1 (directly after head)
+    - Set newNode.next to head.next and set head.next to newNode
+- Copy data from the head to the new node
+- Add the new data into the head node
+- This maintains that the next reference of the final node still points to the head and maintains O(1)
+
+**Adding to the back:**
+- Again insert empty newNode between head and head.next
+- Copy head data into newNode
+- Add new data into head
+- Move the head reference to head.next (newNode)
+
+**Removing from the front:**
+- Move the data from head.next into the head
+- Redirect head.next to the 3rd node skipping over the 2nd node
+- Now at O(1) the new head had the data of the 2nd node and now skips the 2nd node
+- Edge case of list of size 1 the head.next will need to be set to null instead of 3rd node
+
+**Removing from the back:**
+- No way to get O(1) since you will need to access the node prior to the last node requiring a complete list traversal
+- Redirect secondToLast.next to the head bypassing the lastNode
+
+**Removing from the middle:**
+- Same as removing from the middle of an SLL
+- Traverse the list until you get to the correct node
+
+Where are these different linked lists used?
+
+**SLL** generally used in history of web browser searches (back button).
+
+**DLL** mostly used in cache i.e. a music app keeping track of your most recent songs.
+
+**CLL** can be found in music playlists that start over once they complete.
+
+Imagine now in a linked list that each node can only receive 1 pointer but can have as many outgoing pointers as we want. This transforms the linked list into a **tree**.
+
+![](/ArrayLists,%20LinkedLists,%20Stacks%20and%20Queues/2_linkedlists/images/PowerTrees.png)
+
+One of the most common applications of a tree are file systems. Think of each folder as a node and each file as the end of the path.
+
+What about nodes where they can have only 1 outgoing pointer but can receive any number of incoming pointers, this creates a **disjoint set**. This allows for sequences of nodes to eventually lead to a single unique node.
+
+If you remove all limitations on the number of incoming and outgoing pointers you get a **graph**. Graphs are used to model relationships between data. 
+
+![](/ArrayLists,%20LinkedLists,%20Stacks%20and%20Queues/2_linkedlists/images/PowerGraphs.png)
+
