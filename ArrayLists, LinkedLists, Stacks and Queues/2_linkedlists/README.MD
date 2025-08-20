@@ -39,7 +39,7 @@ public class SinglyLinkedList {
     private Node head;
 
     public void addToFront(int data) {
-        Note newNode = new Node(data); // create new node with the data
+        Node newNode = new Node(data); // create new node with the data
         newNode.next = head; // point to the head i.e. the head is now 2nd
         head = newNode; // set this node as the head i.e. it is now 1st
     }
