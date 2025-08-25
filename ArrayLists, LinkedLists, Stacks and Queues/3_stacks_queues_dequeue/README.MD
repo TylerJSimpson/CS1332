@@ -5,6 +5,8 @@
     - [Singly-Linked List Backed Stack](#singly-linked-list-backed-stack)
     - [Array Backed Stacks](#array-backed-stacks)
 - [Queues](#queues)
+    - [Linked List Backed Queues](#linked-list-backed-queues)
+    - [Array Backed Queues](#array-backed-queues)
 - [Variations of Stacks and Queues](#variations-of-stacks-and-queues)
     - [Priority Queues](#priority-queues)
     - [Deques](#deques)
@@ -87,6 +89,86 @@ To clear an array you don't want to just set size to 0 and overwrite because the
 The correct approach is to set size = 0 and then reassign the backing array to a new array. This is O(1) and the old data is collected by the garbage collector.
 
 ## Queues
+
+Unlike stacks which are LIFO, queues are **first in first out (LIFO)**. 
+
+Supported operations:
+- `void enqueue(x)` - adds to an end of the queue
+- `x dequeue()` - removes data from the opposite end of the queue
+- `x peek() / x top()` - returns data at the front but doesn't remove it
+- `boolean isEmpty()` - checks size for 0 or the front for null
+- `void clear()` - sets queue to null
+
+Much like stacks we can back queues with various linear data structures like **Arrays** and **LinkedLists**.
+
+Unsupported operations:
+- Searching for data
+- Arbitrary index access
+- Arbitrary add or remove
+
+### Linked List Backed Queues
+
+Recall queues must add at 1 end and remove from the other.
+
+Adding and removing from the front of a linked list is O(1) but only adding to the end is O(1), removing from the back is O(n). *This means we will want to always add to the back and remove from the front.* 
+
+**enqueue from the tail, dequeue from the head**
+
+Typically we do not use a doubly linked list despite that it can support all necessary operations because it has a higher memory requirement.
+
+Think of this as a printer queue, a customer queue purchasing tickets online, etc.
+
+### Array Backed Queues
+
+Recall adding and removing from the front has a cost of O(n) in an array. We want to avoid shifting altogether, this is why we use Arrays and not ArrayLists. We will need to use a wrap-around/circular array to accomplish this. It is not the same as a circular ArrayList.
+
+Required variables:
+- `size`
+- `capacity`
+- `front`
+- `back`
+
+[1][2][3][2][ ][ ][ ]
+
+Here `size` = 4 and `capacity` = 7. `Front` is at index 0 and `back` is at front index + `size`.
+
+Here we will `enqueue` at the back and `dequeue` at the back again.
+
+r, a, m, b, l, i, n
+
+[ ][ ][ ][ ][ ][ ][ ]
+
+[r][a][m][b][l][i][n]
+
+`back` index is equal to the `size` as you add data. But what about at this point when `size` = 7 but there is no `index` of 7?
+
+To account for this we always use mod on the back i.e. `back % capacity` or `back % 7` so `back` becomes 0 in this case and the `back` and `front` are now both = 0.
+
+Now at this point say we `dequeue` decreasing the size by 1.
+
+Now the `back` points to index 0 but the `front` now points to index 1.
+
+[ ][a][m][b][l][i][n]
+
+`Dequeue` again:
+
+[ ][ ][m][b][l][i][n]
+
+[ ][ ][ ][b][l][i][n]
+
+[ ][ ][ ][ ][l][i][n]
+
+Now `back` = index 0, `front` = index 4 (l).
+
+If we `enqueue` w and r:
+
+[w][ ][ ][ ][l][i][n]
+
+Now `back` is index 1 and `front` is still index 4.
+
+[w][r][ ][ ][l][i][n]
+
+Something that stands out is in both the **stack** and **queue** examples - the big O of the Linked List ADT backing was superior compared to the Array ADT backing. Big O does not contain the full picture though. There is a concept called **spatial locality** where a processor may prefetch data in adjacent memory optimizing the process. This cannot happen with a Linked List but it will happen with an Array blurring this line. Big O is a high level tool and not always the best indicator of efficiency in practice.
 
 ## Variations of Stacks and Queues
 
