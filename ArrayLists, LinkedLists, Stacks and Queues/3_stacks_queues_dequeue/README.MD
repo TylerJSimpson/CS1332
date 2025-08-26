@@ -174,4 +174,67 @@ Something that stands out is in both the **stack** and **queue** examples - the 
 
 ### Priority Queues
 
+**Priority queues** are similar to stacks and queues in that they are linear and data can be added and removed as necessary.
+
+Priority queues are an ADT with multiple implementations again like stacks and queues.
+
+Stack ADT:
+- Remove -> Most recently added element
+
+Queue ADT
+- Remove -> Least recently added element
+
+Priority Queue ADT
+- Remove -> element with highest priority
+
+While a queue is like the waiting area of a restaurant the priority queue is like the waiting area of an emergency room.
+
+Often used to find min and max values of a dataset. 
+
+Requirements:
+- Comparable data
+
+A challenge is how to efficiently rank by priority because it will become expensive to always search through all the data. A backing solution we will look at later is a `heap`.
+
+Other places to find priority queues:
+- Boarding of a plane
+- Graph algorithms (minimum spanning trees) finding the shortest path from A to B
+
+In theory priority queues are linear ADTs but in practice the linear model does not work well. For an array backed version the element with the highest priority could be at the front so dequeuing would be O(1) but enqueuing would be O(n). For the linked list version dequeuing again would be O(1) but enqueuing would be O(n). So we will need to assess non linear backing structures later.
+
 ### Deques
+
+Deque stands for **double-ended queue**. They do not exhibit LIFO or FIFO behavior. They are defined by the ability to add or remove from either end of the data structure. 
+
+Supported Operations:
+- `void addFirst(x)`
+- `void addLast(x)`
+- `x removeFirst()`
+- `x removeLast()`
+- `boolean isEmpty()`
+- `int size()`
+
+Deques can be backed by an array or doubly linked list allowing all methods to have a time complexity of O(1).
+
+Unsupported Operations:
+- Searching for data
+- Arbitrary index access
+- Arbitrary adding/removing
+
+Array Backed Deques:
+- Use circular wrap around implementation
+- `addLast()` - increment back -> Add to back
+- `removeFirst()` - remove at front -> increment front
+- `addFirst()` - decrement front (check if <0) -> add to front
+- `removeLast()` - remove at back -> decrement back (check if <0)
+- All O(1) armotized due to resize
+
+Linked List Backed Deques:
+- `addLast()` - add at tail
+- `removeLast()` - remove at tail
+- `removeFirst()` - remove at head
+- `addFirst()` - add at head
+- All O(1)
+
+Note that java Modulo may work different than expected so a helper function will need to be created when using the circular arrays. For example -9 % 5 you may expect -10 = 5 (-2) + 1 so it would return 1 but in reality it will return -4 because -4 is closest to 0 of the negative remainders. Generally we think of the smallest non-negative remainder.
+
