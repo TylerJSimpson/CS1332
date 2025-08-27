@@ -90,7 +90,7 @@ The correct approach is to set size = 0 and then reassign the backing array to a
 
 ## Queues
 
-Unlike stacks which are LIFO, queues are **first in first out (LIFO)**. 
+Unlike stacks which are LIFO, queues are **first in first out (FIFO)**. 
 
 Supported operations:
 - `void enqueue(x)` - adds to an end of the queue
