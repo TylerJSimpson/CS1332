@@ -55,3 +55,50 @@ Additional tree terminology:
 ![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/4_bst_introduction/images/TreeClassification.png)
 
 ### Binary Trees
+
+**Binary trees** are trees with a shape restriction where each node can have a maximum of 2 children. There is also a further sub classification called the **binary search tree (BST)** which are binary trees with an imposed order property.
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/4_bst_introduction/images/BinaryTreeDefinition.png)
+
+Each node in a binary tree stores at minimum data and references to it's two childre which are referred to as left and right children.
+
+Additional information they can store includes parent reference, depth, height.
+
+A binary tree is **full** if every node has either 0 or 2 children. A binary tree is **complete** if all levels are completely filled left to right except the bottom. A binary tree is **degenerate** if all nodes have 1 child except the leaf which would have 0 i.e. a linked list.
+
+Node references either point to a child or null. 
+
+
+Iterating through a binary tree:
+```java
+public void traverse(Node node) {
+    if (node != null) {
+        traverse(node.left)
+        traverse(node.right)
+    }
+}
+```
+
+**Binary search trees (BST)** inherit the properties from binary trees but enforce an ordering policy where left child data is less than parent data which is less than the right child node data. 
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/4_bst_introduction/images/BinarySearchTreeDefinition.png)
+
+Notice 4 < 12 < 19 and 12 < 29 < 103 in the example.
+
+In java the BST must implement the Comparable interface.
+
+BST helps by on average splitting the search space in half per comparison leading to O(log n) runtimes because each comparison tells you the data is to the left or to the right. This O(log n) is guaranteed when the tree is filled in or complete but if it is degenerate this goes up to O(n).
+
+Traversals
+- Depth Traversals (Stack-based)
+    - Travel down the tree taking a branch as deep as it can go before reaching a null child
+        - preorder traversal
+        - inorder traversal
+        - postorder traversal
+- Breadth Traversal (Queue-based)
+    - Goes down in depth 1 step at a time exploring everything i.e. everything 1 step away from the root, then 2 steps away from the root...
+        - levelorder traversal
+
+Of note when giving a number of nodes you can calculate the number of distinct binary trees and binary search trees using the catalan number. 3 nodes in a binary search tree 123 can form 5 distinct trees and in a binary tree can form 30 distinct trees.
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/4_bst_introduction/images/BinarySearchTreeRoots.png)
