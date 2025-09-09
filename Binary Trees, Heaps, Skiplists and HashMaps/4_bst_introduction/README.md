@@ -1,9 +1,17 @@
 # BST Introduction
 
 # Index
--[Trees](#trees)
-    -[Trres](#trees-1)
-    -[Binary Trees](#binary-trees)
+- [Trees](#trees)
+    - [Trres](#trees-1)
+    - [Binary Trees](#binary-trees)
+- [Tree Traversals](#tree-traversals)
+    - [Depth (Recursive) Traversals](#depth-recursive-traversals)
+        - [Preorder Traversal](#preorder-traversal)
+        - [Postorder Traversal](#postorder-traversal)
+        - [Inorder Traversal](#inorder-traversal)
+    - [Breadth (Iterative) Traversals](#breadth-iterative-traversals)
+        - [Levelorder Traversal](#levelorder-traversal)
+    - [Choosing a Traversal](#choosing-a-traversal)
 
 ## Trees
 
@@ -102,3 +110,101 @@ Traversals
 Of note when giving a number of nodes you can calculate the number of distinct binary trees and binary search trees using the catalan number. 3 nodes in a binary search tree 123 can form 5 distinct trees and in a binary tree can form 30 distinct trees.
 
 ![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/4_bst_introduction/images/BinarySearchTreeRoots.png)
+
+## Tree Traversals
+
+### Depth (Recursive) Traversals
+
+Traversals essentially accomplish what an iterable/iterator in Java does but with a different ordering of events.
+
+#### Preorder Traversal
+
+```
+preorder (Node node):
+    if node is not null:
+        look at the data in the node
+        recurse left
+        recurse right
+```
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/4_bst_introduction/images/PreorderRecursiveTracing.png)
+
+In the image we would then go down to the right child from the root and continue resulting in this list:
+
+[13,7,5,11,29,19]
+
+The preorder list generated is useful in the case you want to create an exact copy of the current BST. **The preorder traversal uniquely describes the structure of the BST.**
+
+#### Postorder Traversal
+
+```
+postorder (Node node):
+    if node is not null:
+        recurse left
+        recurse right
+        look at the data in the node
+```
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/4_bst_introduction/images/PostorderRecursiveTracing.png)
+
+Final list:
+
+[5,11,7,19,29,13]
+
+This traversal is useful where we remove data since generally you remove from the leaves.
+
+#### Inorder Traversal
+
+```
+inorder (Node node):
+    if node is not null:
+    recurse left
+    look at the data in the node
+    recurse right
+```
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/4_bst_introduction/images/InorderRecursiveTracing.png)
+
+Final list:
+
+[5,7,11,13,19,29]
+
+Notice the returned list has the nodes listed in sorted order. This depends on the BST having the left < middle < right structure.
+
+### Breadth (Iterative) Traversals
+
+There are multiple breadth traversals but we will only be covering **levelorder** here. Instead of utilizing the recursive stack like depths traversals, breathd traversals utilize a queue to access each data in an order sorted by closeness to the root.
+
+#### Levelorder Traversal
+
+The goal here is to get a list of all the data in the levels or **depths** they appear in the tree.
+
+```
+levelorder():
+    Create Queue q
+    Add root to q
+    while q is not empty:
+        Node curr = q.dequeue()
+        if curr is not null:
+            q.enqueue(curr.left)
+            q.enqueue(curr.right)
+```
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/4_bst_introduction/images/LevelorderIterativeTracing1.png)
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/4_bst_introduction/images/LevelorderIterativeTracing2.png)
+
+Final list:
+
+[20,15,32,13,29,50,6,31,67]
+
+
+### Choosing a Traversal
+
+- **Preorder**: The preorder traversal uniquely identifies a BST, when adding the data to an empty tree in the order given by this traversal. Although we haven't discussed how the add method works in BSTs, you can double check this feature of preorder traversal in the visualization tool. Most definitely, check this feature out  after you've learned about the adding procedure. The preorder traversal is a hybrid depth approach that biases towards giving you data closer to the root faster, than data in leaf nodes.
+
+- **Inorder**: The most notable property of the inorder traversal is that if implemented on a BST, the data is returned in a sorted order. However, please note that the inorder traversal is the only one of the four traversals that does not uniquely define the BST. If the traversal is operating on a general Binary Tree, then it will give you the data on a left-to-right basis (if the tree is properly spaced out when drawn).
+
+- **Postorder**: The postorder traversal is similar to preorder in that it uniquely identifies the BST. One useful feature of the postorder traversal is that if you were to remove data from this ordering, you would only remove leaf nodes. This particular property will come in handy when you learn the remove procedure of a BST. The postorder traversal is a hybrid depth approach that biases towards giving you data in leaf nodes faster, than data closer to the root.
+
+- **Levelorder**: This traversal is the black sheep in implementation, but it's also the easiest to understand conceptually. The levelorder traversal gives you the data in an ordering sorted based on the depth of the data. Thus, it is the fully realized version of the preorder traversal where it gives you full control of getting internal nodes before deeper leaves. As you might have guessed, it also uniquely defines a BST.
