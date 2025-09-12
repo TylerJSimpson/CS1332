@@ -58,6 +58,108 @@ It is important to bring up just how efficienct O(log n) is. It is extremely eff
 
 ## Adding to a BST
 
+Here we will look at the `add` method of a BST. 
+
+|Recursive Cases|Search Behavior|Add Behavior|
+|---------------|---------------|------------|
+|data < node.data|Traverse to left child|Traverse to left child|
+|data > node.data|Traverse to right child|Traverse to right child|
+|data == node.data|Data found, terminate search|Duplicate found, do not add|
+|node is null|Data not in BST, terminate search|Data not in BST, add at that position|
+
+Note that the `search` and `add` behavior are identical for the cases where we are traversing. Then if the data is found in search we do not add because we are not handling BST duplicates in this course.
+
+When a node is added at the position we can assume it will always be a leaf.
+
+When you add you will compare starting with the root each comparison down a search. See example below.
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/5_bst_operations_skiplists/images/BSTAddingExample.png)
+
+For adding in a BST we use a technique called **pointer reinforcement**. There is another method called the **look-ahead method**. 
+
+**Look-Ahead**
+- Keep track of parent instead of the current node
+- Never actually reaches a null node
+- Instead, check if child is null before traversing that direction
+- Add: If child is null, then we can add there
+- Works for simple restructuring operations like add, but becomes less effective for more complex operations
+
+**Pointer Reinforcement**
+- Use the return field to restructure tree
+    - Return the node that should be in the direction of traversal
+    - If you traverse left, return what should be the left child
+    - If you traverse right, return what should be the right child
+- Set left/right pointer to what is returned
+- Responsibility of restructuring is moved from the child's recursive call to the parent
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/5_bst_operations_skiplists/images/ChangingTreeStructureBST.png)
+
+```
+public void add(int data):
+    root <- rAdd(root, data)
+
+private Node rAdd(Node curr, int data):
+    if curr == null:
+        size++
+        return new Node(data)
+    else if data < curr.data:
+        curr.left <- rAdd(curr.left, data)
+    else if data > curr.data:
+        curr.right <- rAdd(curr.right, data)
+    return curr
+```
+
+Public add wrapper method that just takes in the data to add. The user will call this and we assign the return value to the recursive helper method to the root. This is very important because the root is the pointer to reinforce.
+
+```
+public void add(int data):
+    root <- rAdd(root, data)
+```
+
+Now the private recursive helper method. It must be private since we do not want outside sources calling it. The method takes in a node and the data to add and it returns a node.
+
+```
+private Node rAdd(Node curr, int data):
+    if curr == null:
+        size++
+        return new Node(data)
+    else if data < curr.data:
+        curr.left <- rAdd(curr.left, data)
+    else if data > curr.data:
+        curr.right <- rAdd(curr.right, data)
+    return curr
+```
+
+The base case we check if the current node is null. If it is, we increment size and return the new node. Note that the return value is assigned to the root in the non recursive method `add`. 
+
+```
+    if curr == null:
+        size++
+        return new Node(data)
+```
+
+If the base case does not hit then we look at the 2 other possible cases where we traverse left or right until we get to a null node.
+
+```
+    else if data < curr.data:
+        curr.left <- rAdd(curr.left, data)
+    else if data > curr.data:
+        curr.right <- rAdd(curr.right, data)
+```
+
+If the data is greater than the current node's data then set the current node's right child equal to the recursive call on the right child.
+
+Once a node is added we want to return the current node. This is what reinforces the pointers that are not changed. 
+
+```
+    return curr
+```
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/5_bst_operations_skiplists/images/BSTAddReturnExample.png)
+
+
+Note that this psuedo code also handles duplicate nodes because it will skip down to the return statement when curr == data.
+
 ## Removing from a BST
 
 ## SkipLists
