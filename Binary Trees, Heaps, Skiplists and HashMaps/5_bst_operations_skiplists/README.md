@@ -6,6 +6,12 @@
     - [BST Search Algorithm](#bst-search-algorithm)
  - [Adding to a BST](#adding-to-a-bst)
  - [Removing from a BST](#removing-from-a-bst)
+    - [Zero-Child Case](#zero-child-case)
+    - [One-Child Case](#one-child-case)
+    - [Two-Child Case](#two-child-case)
+        - [Predecessor](#predecessor)
+        - [Successor](#successor)
+    - [Pointer Reinforcement Removal](#pointer-reinforcement-removal)
  - [SkipLists](#skiplists)
 
 ## Searching in a BST
@@ -161,5 +167,175 @@ Once a node is added we want to return the current node. This is what reinforces
 Note that this psuedo code also handles duplicate nodes because it will skip down to the return statement when curr == data.
 
 ## Removing from a BST
+
+|Recursive Cases|Search Behavior|Add Behavior|Remove Behavior|
+|---------------|---------------|------------|---------------|
+|data < node.data|Traverse to left child|Traverse to left child|Traverse to left child|
+|data > node.data|Traverse to right child|Traverse to right child|Traverse to right child|
+|data == node.data|Data found, terminate search|Duplicate found, do not add|Data found, remove it|
+|node is null|Data not in BST, terminate search|Data not in BST, add at that position|Data not in BST, throw exception|
+
+There are several different cases to consider when removing an element.
+
+The remove method is similar to search in that you must first find an element before it can be removed.
+
+If data is found there are 3 different types of removals that must be considered.
+
+### Zero-Child Case
+
+The simplest removal is when the node has no children. Set the parent of the node's pointer to that child to null. In the example below the right child pointer of 40 is set to null.
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/5_bst_operations_skiplists/images/ZeroChildCase.png)
+
+### One-Child Case
+
+The data in the node's child cannot be lost in the case of there being a child. Instead the pointer of the parent (13 in the example) to the child (node 8) so instead of pointing to it's child it points to it's grandchild skipping the child altogether.
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/5_bst_operations_skiplists/images/OneChildCase.png)
+
+### Two-Child Case
+
+In this case the pointers cannot be null'd our or redirected without the risk of losing data. There are 2 different way to go about this **successor** and **predecessor**.
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/5_bst_operations_skiplists/images/TwoChildCase.png)
+
+#### Predecessor
+
+To arrive at the predecessor you first go to the left child of the root then you go right until you reach a null node this will get you to the predecessor the node that is closest to the root but lower.
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/5_bst_operations_skiplists/images/TwoChildCasePredecessor.png)
+
+#### Successor
+
+To find the successor you go to the right child and then to the left until you reach a left null child.
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/5_bst_operations_skiplists/images/TwoChildCaseSuccessor.png)
+
+### Pointer Reinforcement Removal
+
+```
+public int remove(int data):
+    Node dummy <- new Node(-1)
+    root <- rRemove(root, data, dummy)
+    return dummy.data
+
+private Node rRemove(Node curr, int data, Node dummy):
+    if curr == null:
+        // data not found case
+    else if data < curr.data:
+        curr.left <- rRemove(curr.left, data, dummy)
+    else if data > curr.data:
+        curr.right <- rRemove(curr.right, data, dummy)
+    else:
+        // data found case
+    return curr
+```
+
+The public wrapper takes in some data to remove and returns some data that was removed. The dummy node is created with null data to be used as a storage container. Once we reach the node of the data to be removed we set that data to the dummy node. Beyond this change the recursion is the same as we saw previously.
+
+```
+public int remove(int data):
+    Node dummy <- new Node(-1)
+    root <- rRemove(root, data, dummy)
+    return dummy.data
+```
+
+
+The left and right traversal is the same as before
+
+```
+    else if data < curr.data:
+        curr.left <- rRemove(curr.left, data, dummy)
+    else if data > curr.data:
+        curr.right <- rRemove(curr.right, data, dummy)
+```
+
+There are actually 2 different base cases now. Whether the data is not found and whether the data is found.
+
+When the data is not found generally you return a null or throw an exception.
+
+When the data is found:
+
+```
+dummy.data <- curr.data
+decrement size
+if 0 children:
+    return null
+else if left child is non-null:
+    return left child
+else if right child is non-null:
+    return right child
+else:
+    Node dummy2 <- new Node(-1)
+    curr.right <- removeSuccessor(curr.right, dummy2)
+    curr.data <- dummy2.data
+```
+
+first we set the dummy node data to the data in the current node and decrease size.
+
+```
+dummy.data <- curr.data
+decrement size
+```
+
+Then we have the 3 cases **zero-child**, **one-child**, and **two-child**.
+
+zero-child case:
+
+Returning null here is the equivalent of setting the parent's pointer to null.
+
+```
+if 0 children:
+    return null
+```
+
+one-child case:
+
+Returning the child here is the equivalent of setting the parent's pointer to it's grandchild.
+
+```
+else if left child is non-null:
+    return left child
+else if right child is non-null:
+    return right child
+```
+
+two-child case:
+
+First we need to make another recursive call to remove either the successor or predecessor. We are using the successor in this example. 
+
+1st set up a 2nd dummy to hold the successor data. 2nd make a call to another recursive helper method. This method should both search for the successor and remove it instead of having 1 method for each.
+
+```
+else:
+    Node dummy2 <- new Node(-1)
+    curr.right <- removeSuccessor(curr.right, dummy2)
+    curr.data <- dummy2.data
+```
+
+Successor helper method:
+
+```
+private Node removeSuccessor(Node curr, Node dummy):
+    if curr.left == null:
+        dummy.data <- curr.data
+        return curr.right
+    else:
+        curr.left <- removeSuccessor(curr.left, dummy)
+```
+
+Takes in a node and dummy node. The base case is if the node's left child is null. Then we set the dummy node's data to the current node's data and return the node's right child. This handles the no child and 1 child remove cases. Lastly the left child is not null so we make a recursive call to the left child and the return reinforces the pointer in unchanged nodes. 
+
+Finally we of course return up the recursive stack reinforcing the pointers.
+
+```
+return curr
+```
+
+Then the return to the public method where the dummy data is returned.
+
+```
+return dummy.data
+```
 
 ## SkipLists
