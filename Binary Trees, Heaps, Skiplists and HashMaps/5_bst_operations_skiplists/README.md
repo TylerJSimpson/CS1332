@@ -339,3 +339,71 @@ return dummy.data
 ```
 
 ## SkipLists
+
+We have used BST to get an O(log(n)) in searching sorted data structures but what if there is 
+randomness involved? This is where we can look at **SkipLists**.
+
+SkipLists usually have a data pointer and an up, down, left, and right pointer. Sometimes they will not have the up and left pointers. Each linked list at each level is sorted in ascending order.
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/5_bst_operations_skiplists/images/SkipListsIntroduction.png)
+
+SkipLists are probability based. 
+
+- Number of times a node is duplicated depends on coin flips.
+    - Heads promotes a node. Tails terminates promotion in adding.
+- Examples:
+    - T would promote 0 times, giving 1 node
+    - HT would promote 1 time, giving 2 nodes
+    - HHT would promote 2 times, giving 3 nodes
+- Probability of a node reaching level i is (1/2)^i
+
+You can see above all of the data is on level 0. Half of the data is on level 1, etc.
+
+Example:
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/5_bst_operations_skiplists/images/SkipListAddingExample1.png)
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/5_bst_operations_skiplists/images/SkipListAddingExample2.png)
+
+Notice that once you reach the tails that is an end sequence. If we continue there would be 3 occurrences of 45.
+
+The reason it is called a **SkipList** is because the goal is to be able to skip over a lot of data while traversing.
+
+General Algorithm:
+- Begin the search at the head (the top left infinity node)
+- Look at the right node if it exists and compare with data
+    - If data < right then continue moving right
+    - If data > right then move down a level
+    - if data equals right then data has been found
+- If at the bottom level data isn't in the SkipList
+    - For adding this means we've found where to add
+
+Adding to SkipList:
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/5_bst_operations_skiplists/images/SkipListAddingExample3.png)
+
+- Start at the `-inf` upper left node
+- 25 > 20 so we move to `20` node to the right
+- 25 < inf so we move down to `20` level 2
+- 25 < 45 so we move down to `20` level 1
+- 25 < 45 so we move down to `20` level 0
+- 25 < 45 so we add 25 to the right of `20` and left of `45`
+
+Removing from SkipList:
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/5_bst_operations_skiplists/images/SkipListRemovingExample1.png)
+
+We use a similar process as above. Since we always begin at the upper left -inf node we will always find the target data at the highest level first. To remove all occurrences you perform a series of doubly-linked list remove operations until you reach level 0. This means 45 will be removed 3 times in this example.
+
+Efficiency:
+
+|Scenario|Best Case|Average Case|Worst Case|
+|--------|---------|------------|----------|
+|Search|O(log n)|O(log n)|O(n)|
+|Add|O(log n)|O(log n)|O(n)|
+|Remove|O(log n)|O(log n)|O(n)|
+|Space|O(n)|O(n)|O(n log n)|
+
+O(n) can occur when all data is on level 0 so no data can be skipped over.
+
+Space complexity average is O(n) since it becomes a geometric series that converges. There are 2 different worst case scenarios. If no data is promoted then it degenerates into a linked list. If all data is promoted to level cap then this results in a massive grid resulting in O(n log n).
