@@ -58,8 +58,10 @@ public class BST<T extends Comparable<? super T>> {
         else if (comparison > 0) { // go right
             node.setRight((add(node.getRight(), data)));
         }
-
-        // Base cose: duplicate data exists
+        else {
+        }
+        
+        // Base case: duplicate data exists
         return node;
 
     }
@@ -92,7 +94,49 @@ public class BST<T extends Comparable<? super T>> {
      * @throws java.util.NoSuchElementException   If the data is not in the tree.
      */
     public T remove(T data) {
-        // WRITE YOUR CODE HERE (DO NOT MODIFY METHOD HEADER)!
+        // Throw null data error
+        if (data == null) {
+            throw new IllegalArgumentException("Error: null data cannot be added.");
+        }
+
+        Ref<T> removed = new Ref<>();
+        root = remove(root, data, removed);
+        if (removed.val == null) {
+            throw new NoSuchElementException("Error: data not found.");
+        }
+        size --;
+        return removed.val;
+    }
+
+    private BSTNode<T> remove(BSTNode<T> node, T data, Ref<T> removed) {
+        // Base case: data does not exist
+        if (node == null) {
+            return null;
+        }
+
+        // Compare data to node (+ go right, - go left)
+        int comparison = data.compareTo(node.getData());
+        if (comparison < 0) { // go left
+            node.setLeft(remove(node.getLeft(), data, removed));
+            return node;
+        }
+        else if (comparison > 0) { // go right
+            node.setRight(remove(node.getRight(), data, removed));
+            return node;
+        }
+        
+        // Found node
+        removed.val = node.getData();
+
+        // No children
+
+        // One child
+
+        // Two children
+    }
+
+    private static class Ref<E> {
+        E val;
     }
 
     /**
