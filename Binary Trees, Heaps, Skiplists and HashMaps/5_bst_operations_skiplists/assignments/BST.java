@@ -129,10 +129,32 @@ public class BST<T extends Comparable<? super T>> {
         removed.val = node.getData();
 
         // No children
+        if (node.getLeft() == null && node.getRight() == null) {
+            return null;
+        }
 
         // One child
+        if (node.getLeft() == null) {
+            return node.getRight();
+        }
+        if (node.getRight() == null) {
+            return node.getLeft();
+        }
 
         // Two children
+        BSTNode<T> successor = node.getRight();
+        while (successor.getLeft() != null) {
+            successor = successor.getLeft();            
+        }
+
+        // Replace data with successor
+        node.setData(successor.getData());
+
+        Ref<T> dummy = new Ref<>();
+        node.setRight(remove(node.getRight(), successor.getData(), dummy));
+
+        return node;
+
     }
 
     private static class Ref<E> {
