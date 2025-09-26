@@ -111,5 +111,51 @@ Briefly we can touch on two other methods that are used on Heaps including **uni
 Generally with union and increase priority we are not using a Binary Heap and instead using something like a **binomial heap** or **fibonacci heap**.
 
 
-
 ## The BuildHeap Algorithm
+
+Recall that building a heap 1 by 1 gives us a time complexity of O(n log n). Using the BuildHeap algorithm we aim to build a heap in linear time.
+
+Problem Description:
+- Input: Unsorted, unordered array
+- Problem: Construct a heap from the input
+- Possible Solutions:
+    - Use the add method to add all data to an empty heap one by one
+        - Adding to heap O(log n)
+        - Add to heap n times
+        - O(n log n)
+    - BuildHeap
+
+BuildHeap:
+- Accepts unordered data as presented
+- Places data in backing array to ensure shape property is enforced
+- Using subheaps in Down Heap process we can optimize the process of building a heap
+
+You can build a heap by repeatedly calling the downheap method starting from the bottom up creating valid subheaps. You loop from index size/2 to index 1 and a downheap is performed at each input. You use size/2 because size gives us the last element in a heap and by dividing it's index by 2 you find it's parent. size/2 gives us the last element that has a child.
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/6_heaps/images/BuildHeapExample1.png)
+
+In this example we want to build a MinHeap from the array pictured.
+
+The algorithm starts at index 4. This is because the last element (size = 9) index 9 // 2 = 4 (integer division).
+
+Now in the downheap process we compare the parent with the children. We would swap the parent with the smallest child. In this case 5 is the smallest so it needs to swap with the parent. The Downheap method would then look at the child that was swapped i.e. 32 in this case. If this is a leaf it terminates otherwise it would continue comparing until no swaps happen.
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/6_heaps/images/BuildHeapExample2.png)
+
+The algorithm then decrements the index from 4 to 3 which is data point 14. 
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/6_heaps/images/BuildHeapExample3.png)
+
+In this case both children's data is smaller. 4 is the smallest so it will be the one that swaps.
+
+Then we decrement to inde 2 which is data point 71. Both 5 and 33 are smaller. Since 5 is smallest we swap 71 and 5. Now 71 has children so we must compare again to 17 and 32 which are both smaller. Since 17 is smallest we swap it with 71.
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/6_heaps/images/BuildHeapExample4.png)
+
+Now the algorithm decrements the index to 1 and we are at the root. We continue then to downheap from index 1 which is data point 1. Because 1 is smaller than both children the order property is not violated and the downheap method terminates.
+
+We will not present a formal proof on the time complexity but **buildheap is an O(n) operation**. Roughly, this is because there is more data in the bottom half than the top half. The number of times you go down the tree the data doubles, meaning exponential growth. Downheap cost is O(1) at the bottom of the tree and increases linearly as you approach the root. 
+
+This means most of the data (bottom) has O(1) cost, and a few data (top) have the O(log n) cost. If you sum the series this balances out to O(n).
+
+**The BuildHeap algorithm's worst case beats the average case of the naive algorithm even in constant factors**.
