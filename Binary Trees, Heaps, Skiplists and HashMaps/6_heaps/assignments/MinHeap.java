@@ -40,6 +40,25 @@ public class MinHeap<T extends Comparable<? super T>> {
      */
     public void add(T data) {
         // WRITE YOUR CODE HERE (DO NOT MODIFY METHOD HEADER)!
+
+        // Null data exception
+        if (data == null) {
+            throw new IllegalArgumentException("Error: null data cannot be added.");
+        }
+
+        // Resize backing array
+        if (size == backingArray.length) {
+            T[] newArr = (T[]) new Object[backingArray.length * 2];
+
+            for (int i = 0; i < size; i++) {
+                newArr[i] = backingArray[i];
+            }
+            backingArray = newArr;
+        }
+
+        // Add at the end
+        data = backingArray[size-1];
+        size++;
     }
 
     /**
