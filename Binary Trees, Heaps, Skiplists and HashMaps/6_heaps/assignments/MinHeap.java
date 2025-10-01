@@ -39,7 +39,6 @@ public class MinHeap<T extends Comparable<? super T>> {
      * @throws java.lang.IllegalArgumentException If the data is null.
      */
     public void add(T data) {
-        // WRITE YOUR CODE HERE (DO NOT MODIFY METHOD HEADER)!
 
         // Null data exception
         if (data == null) {
@@ -47,7 +46,7 @@ public class MinHeap<T extends Comparable<? super T>> {
         }
 
         // Resize backing array
-        if (size == backingArray.length) {
+        if (size+1 == backingArray.length) {
             T[] newArr = (T[]) new Object[backingArray.length * 2];
 
             for (int i = 0; i < size; i++) {
@@ -57,8 +56,10 @@ public class MinHeap<T extends Comparable<? super T>> {
         }
 
         // Add at the end
-        data = backingArray[size-1];
+        data = backingArray[size + 1];
         size++;
+        siftUp(size);
+
     }
 
     /**
@@ -73,6 +74,28 @@ public class MinHeap<T extends Comparable<? super T>> {
      */
     public T remove() {
         // WRITE YOUR CODE HERE (DO NOT MODIFY METHOD HEADER)!
+    }
+
+    /**
+     * HELPER METHODS
+     */
+
+    private void siftUp(int i) {
+        while (i > 1) {
+            int parent = i / 2;
+            swap(i, parent);
+            i = parent;
+        }
+    }
+
+    private void siftDown(int i) {
+
+    }
+
+    private void swap(int i, int parent) {
+        T t = backingArray[i];
+        backingArray[i] = backingArray[parent];
+        backingArray[parent] = t;
     }
 
     /**
