@@ -47,18 +47,19 @@ public class MinHeap<T extends Comparable<? super T>> {
 
         // Resize backing array
         if (size+1 == backingArray.length) {
-            T[] newArr = (T[]) new Object[backingArray.length * 2];
+            T[] newArr = (T[]) new Comparable[backingArray.length * 2];
 
-            for (int i = 0; i < size; i++) {
+            for (int i = 1; i <= size; i++) {
                 newArr[i] = backingArray[i];
             }
             backingArray = newArr;
+
         }
 
         // Add at the end
-        data = backingArray[size + 1];
-        size++;
+        backingArray[++size] = data;    // write, then bubble up from 'size'
         siftUp(size);
+
 
     }
 
@@ -73,23 +74,47 @@ public class MinHeap<T extends Comparable<? super T>> {
      * @throws java.util.NoSuchElementException If the heap is empty.
      */
     public T remove() {
-        // WRITE YOUR CODE HERE (DO NOT MODIFY METHOD HEADER)!
+        if (size == 0) {
+            throw new NoSuchElementException("Error: the Heap is empty.");
+        }
+
+        T min = backingArray[1];
+        T last = backingArray[size];
+        backingArray[size] = null;
+        size--;
+        if (size > 0) {
+            backingArray[1] = last;
+            siftDown(1);
+        }
+        return min;
     }
 
     /**
      * HELPER METHODS
      */
 
-    private void siftUp(int i) {
+    private void siftUp(int i) { // If child is smaller, move up
         while (i > 1) {
             int parent = i / 2;
+            if (backingArray[i].compareTo(backingArray[parent]) >= 0) {
+                break;
+            }
             swap(i, parent);
             i = parent;
         }
     }
 
     private void siftDown(int i) {
+        while (2 * i <= size) {
+            int left = 2 * i;
+            int right = left + 1;
+            int smaller = left;
 
+            if (right <= size && backingArray[right].compareTo(backingArray[left]) < 0) smaller = right;
+            if (backingArray[smaller].compareTo(backingArray[i]) >= 0) break;
+            swap (i, smaller);
+            i = smaller;
+        }
     }
 
     private void swap(int i, int parent) {
