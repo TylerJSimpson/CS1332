@@ -159,3 +159,5 @@ We will not present a formal proof on the time complexity but **buildheap is an 
 This means most of the data (bottom) has O(1) cost, and a few data (top) have the O(log n) cost. If you sum the series this balances out to O(n).
 
 **The BuildHeap algorithm's worst case beats the average case of the naive algorithm even in constant factors**.
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/6_heaps/images/HeapBigO.png)
