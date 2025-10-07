@@ -16,7 +16,7 @@
 - Unordered (when used with hasing)
 - Keys are unique (<A,3> and <A,4> cannot exist in the same map)
 - Keys are immutable (cannot be changed)
-- Values do not need to be unique and are not necessariyl immutable
+- Values do not need to be unique and are not necessarily immutable
 - Maps are sometimes called dictionaries
 - Example: Names and phone numbers (phone number is key in this example)
 
@@ -77,6 +77,38 @@ Because of the compression function mod we tend to make the **table size** a pri
 **load factor** is the size / capacity. This parameter has to do with how high we're willing to let the load factor become before we resize the table. As the load factor increases, the table will become inundated with entries, and it becomes more likely for a collision to occur. If we keep the threshold low then we can almost guarantee O(1) search times but we may have to resize more often and we will use more memory than we may want to.
 
 ## Collision Handling - External Chaining
+
+External chaining is our first example of collision handling. Collision handling policies can be roughly categorized into 2 different types:
+
+- **Closed addressing**: a policy where all keys that collide into the same location are stored at that location by some means
+
+- **Open addressing**: a policy where additional colliding keys can be stored at a different location based on the original location
+
+**External chaining** is a closed addressing policy. 
+
+Backing structure: Array of LinkedLists where each index can store multiple entries. Essentially each of the colliding keys are stored at a linkedList at that location.
+
+This is called a "closed addressing" strategy because entries are always found at the exact index calculated.
+
+![](/Binary%20Trees,%20Heaps,%20Skiplists%20and%20HashMaps/7_hashmaps/images/HashmapsExternalChaining.png)
+
+In the previous example we talked about index 61 being duplicated. In the external chaining example this is how it would look. The 2nd key-value pair placed at index 61 will be placed at the head of the linked list at that index. This keeps the operation O(1) time complexity. There are instances of adding to the back in external chaining as well.
+
+When using external chaining we don't run out of space but long chains impact runtimes. So we still use the size / capacity load factor to avoid excessive chaining.
+
+Now when it comes to size don't think of it as across indices. You could have an example Array of capacity 10 and size 5 if all 5 instances are externally chained to index 1 causing a 50% load factor.
+
+When it comes to resizing with external chaining you have to both iterate through the array index as well as each linked list.
+
+Each time a resize occurs it requires a compression of the hash codes.
+
+```
+key.hashcode() % newBackingArray.length
+```
+
+*You do not want to just copy everything over because it will disrupt retrieval attempts and it is possible for keys to collide in the resized backing array*
+
+Of note since there will not be duplicates you can just simply add to the front of the new chain when resizing.
 
 ## Collision Handling - Probing Strategies
 
