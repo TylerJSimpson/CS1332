@@ -1,10 +1,11 @@
 # HashMaps
 
 # Index
--[Introduction to HashMaps](#introduction-to-hashmaps)
--[Collision Handling - External Chaining](#collision-handling---external-chaining)
--[Collision Handling - Probing Strategies](#collision-handling---probing-strategies)
--[Collision Handling - Double Hashing](#collision-handling---double-hashing)
+- [Introduction to HashMaps](#introduction-to-hashmaps)
+- [Collision Handling - External Chaining](#collision-handling---external-chaining)
+- [Collision Handling - Probing Strategies](#collision-handling---probing-strategies)
+    - [Linear Probing](#linear-probing)
+- [Collision Handling - Double Hashing](#collision-handling---double-hashing)
 
 ## Introduction to HashMaps 
 
@@ -111,5 +112,131 @@ key.hashcode() % newBackingArray.length
 Of note since there will not be duplicates you can just simply add to the front of the new chain when resizing.
 
 ## Collision Handling - Probing Strategies
+
+### Linear Probing
+
+There are 3 main open addressing policies we will be looking at, the first is **linear probing**.
+
+Backing structure here is just an array since each index can only store one entry.
+
+Probing strategies are considered open addressing because the 1st index we calculate is not necessarily where the key-value pair will end up.
+
+**linear probing**: if a collision occurs at a given index, increment the index by one and check again. Incrementing by 1 is a linear function.
+
+Index = (h + origIndex) % backingArray.length
+
+h = number of times probed (1, 2, ... n)
+
+Below we will have an example that ignores resizing to fully demonstrate the collisions.
+
+Put: 8,1,15,5,2,22,50
+
+idx = H(n) % 7
+
+8 % 7 = 1
+
+|0|1|2|3|4|5|6|
+|-|-|-|-|-|-|-|
+||8||||||
+
+1 % 7 = 1
+
+idx = 1 -> 1 + 1 = 2
+
+|0|1|2|3|4|5|6|
+|-|-|-|-|-|-|-|
+||8|1|||||
+
+15 % 7 = 1
+
+idx = 1 + 1 = 2 + 1 = 3
+
+|0|1|2|3|4|5|6|
+|-|-|-|-|-|-|-|
+||8|1|15||||
+
+Eventually we get to:
+
+|0|1|2|3|4|5|6|
+|-|-|-|-|-|-|-|
+||8|1|15|2|5|22|
+
+Now when we get to 50 that compresses to 1 but the array is full downstream. Once we get to index 6 we have to wrap around like we have done in previoust ADT.
+
+|0|1|2|3|4|5|6|
+|-|-|-|-|-|-|-|
+|50|8|1|15|2|5|22|
+
+Next we will look at removing. When removing from a HashMap a standard removal does not work we have to do a **soft removal**. This is where we leave the entry there but mark it with a flag called a **DEL marker** or sometimes a **tombstone**.
+
+We will start with the same backing array as we used above.
+
+|0|1|2|3|4|5|6|
+|-|-|-|-|-|-|-|
+|50|8|1|15|2|5|22|
+
+1st we will try to remove 1. 
+
+1 % 7 = 1
+
+We attempt a GET at index 1. It is not null but the keys are not equal because we GET a key 8.
+
+Now we probe forward to 2 and see it is not null and the keys are equal.
+
+|0|1|2|3|4|5|6|
+|-|-|-|-|-|-|-|
+|50|8||15|2|5|22|
+
+Now imagine if we went to search for 15, we would not be able to find it because we would run into a null at index 2 before we reach index 3. This is why we use a **DEL marker**, usually a boolean marker.
+
+|0|1|2|3|4|5|6|
+|-|-|-|-|-|-|-|
+|50|8|DEL|15|2|5|22|
+
+Let's look at another example where we have performed several removals already.
+
+Again we look for key of 1 and 1 % 7 = 1 so we begin searching at index = 1.
+
+|0|1|2|3|4|5|6|
+|-|-|-|-|-|-|-|
+||8|DEL|15|DEL||22|
+
+We come across 8, DEL, 15, DEL, null. The GET procedure searched the backing array for all possible *contiguous, consecutive, subsequent, occupied* cells to index 1 and thus key 1 is not in the hashmap.
+
+Probing scenarios:
+- valid (not null or deleted) and unequal key
+- valid and equal key
+- deleted
+- null
+
+Let's try to PUT key 1 this time
+
+|0|1|2|3|4|5|6|
+|-|-|-|-|-|-|-|
+||8|DEL|15|DEL||22|
+
+1 % 7 = 1
+
+index 1 we see 8 this is an unequal key so we probe index + 1.
+
+index 2 we see a DEL marker so we **save** the value index + 1 (2) for later because if our continued probing does not find the matching key then we will PUT here. Recall if we find a matching key then we would simply update the value at the matching key index.
+
+index + 2 = 3 keys are not equal
+
+index + 3 = 4 DEL marker but it is not the 1st DEL marker so we continue
+
+index + 4 = 5 is null so we will PUT to index + 1
+
+Now if there were no DEL markers then we would be putting at index + 4
+
+Resizing backing array:
+- Create a new backing array of capacity 2N + 1
+- Loop thru old backing array
+- Rehash all cells to new backing array
+- Skip over all DEL markers
+
+The DEL markers no longer serve a purpose so they can be skipped on resizing.
+
+Think of a situation where we have a table where we have removed everyhing so it contains only DEL markers. In this situation any GET and PUT is going to be O(n) since it will traverse the length of the table. This is one reason why we remove DEL markers in the resize. Another way to minimize this issue is by including DEL markers in the load factor calculation.
 
 ## Collision Handling - Double Hashing
