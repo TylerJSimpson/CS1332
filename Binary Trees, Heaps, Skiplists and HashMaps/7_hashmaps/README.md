@@ -5,6 +5,7 @@
 - [Collision Handling - External Chaining](#collision-handling---external-chaining)
 - [Collision Handling - Probing Strategies](#collision-handling---probing-strategies)
     - [Linear Probing](#linear-probing)
+    - [Quadratic Probing](#quadratic-probing)
 - [Collision Handling - Double Hashing](#collision-handling---double-hashing)
 
 ## Introduction to HashMaps 
@@ -238,5 +239,66 @@ Resizing backing array:
 The DEL markers no longer serve a purpose so they can be skipped on resizing.
 
 Think of a situation where we have a table where we have removed everyhing so it contains only DEL markers. In this situation any GET and PUT is going to be O(n) since it will traverse the length of the table. This is one reason why we remove DEL markers in the resize. Another way to minimize this issue is by including DEL markers in the load factor calculation.
+
+### Quadratic Probing
+
+One of the problems with the previous open addressing technique (linear probing) was that we develop these contiguous blocks of data that must be searched over. For example you could try to PUT at index 1 but traverse dozens of indices until finding an unoccupied block. This problem is known as **primary clustering** or **turtling**. **Quadratic probing** aims to solve this issue.
+
+**Quadratic probing**: if a collision occurs at a given index, add h^2 to the original index and check again. This effectively breaks up clusters.
+
+Index = (h^2 + origIndex) % backingArray.length
+
+Put: 8,1,15,2,5,22
+
+idx = H(n) % 7
+
+H(8) % 7 = 1
+
+|0|1|2|3|4|5|6|
+|-|-|-|-|-|-|-|
+||8||||||
+
+H(1) % 7 = 1
+
+1 is taken
+
+idx + 1^2 = 2
+
+|0|1|2|3|4|5|6|
+|-|-|-|-|-|-|-|
+||8|1|||||
+
+H(15) % 7 = 1
+
+1 is taken
+
+idx + 1^2 = 2
+
+2 is taken
+
+idx + 2^2 = 5
+
+|0|1|2|3|4|5|6|
+|-|-|-|-|-|-|-|
+||8|1|||15||
+
+Eventually we get to this point
+
+|0|1|2|3|4|5|6|
+|-|-|-|-|-|-|-|
+||8|1|2||15|5|
+
+H(22) % 7 = 1
+
+1 is taken, idx + 1^2 = 2 is taken, idx + 2^2 = 5 is taken and the next quadratic will have us wrap around to (idx + 3^2) % 7 = 3, (idx + 4^2) % 7 = 3, (idx + 5^2) % 7 = 5 etc. etc. demonstrating a loop
+
+Generally there is a guardrail of stopping at **h** probes where **h** is the length of the backing array. At this point we can resize the table. Due to the quadratic nature you can actually have collisions in resizing causing a resize inside of a resize so this must be considered.
+
+Solution 1: continually resize until a spot is eventually found
+
+Solution 2: Impose a set of conditions on the table to ensure that this scenario never occurs. For example if load factor is 0.5 and the table length is a prime number.
+
+While we tried to solve the issue of **primary clustering** we now suffer from **secondary clustering** where keys belonging to different indices collide in quadratic steps rather than linear ones.
+
 
 ## Collision Handling - Double Hashing
