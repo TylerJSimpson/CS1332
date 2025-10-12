@@ -7,6 +7,7 @@
     - [Linear Probing](#linear-probing)
     - [Quadratic Probing](#quadratic-probing)
 - [Collision Handling - Double Hashing](#collision-handling---double-hashing)
+- [Summary](#summary)
 
 ## Introduction to HashMaps 
 
@@ -302,3 +303,58 @@ While we tried to solve the issue of **primary clustering** we now suffer from *
 
 
 ## Collision Handling - Double Hashing
+
+**Double hashing**: if a collision occurs at a given index, add a multiple of c to the original index and check again. This adds aspects of linear and quadratic probing.
+- Breaks up clusters created by linear probing
+- index = (c * h + origIndex) % backingArray.length
+- h = number of times we've probed (1,2,3...n)
+- c = result of second hash functio (linear probing if c = 1)
+
+First hash: H(k), used to calculate origIndex
+
+Second hash: D(k), used to calculate probing constant
+- D(k) = q - H(k) % q
+- q = some prime number and q < N
+    - Another prime number added to help further break up clusters
+
+Put: 8,1,15,2,5,22
+
+idx = H(8) % 7 = 1
+
+c = 5 - H(8) % 5 = 2
+
+|0|1|2|3|4|5|6|
+|-|-|-|-|-|-|-|
+||8||||||
+
+We place the 8 and index 1 because it is open. We only use the 2nd hashing if the index is not open.
+
+idx = H(1) % 7 = 1
+
+c = 5 - H(1) % 5 = 5
+
+|0|1|2|3|4|5|6|
+|-|-|-|-|-|-|-|
+||8||||1||
+
+Above we used the 2nd hash since index 1 was occupied.
+
+Eventually we get to:
+
+|0|1|2|3|4|5|6|
+|-|-|-|-|-|-|-|
+||8|2|5|22|1|15|
+
+When removing here we will need to use DEL flags like in linear probing. Also, double hashing can run into infinite probing problems.
+
+**Linear probing** should be considered a special case of **double hashing** but **quadratic hashing** is not. This is because the secondary hash functions depends on the key as input whereas if we wanted the same effect as in quadratic proving, we'd need the probe count as the input.
+
+## Summary
+
+In the wild you will mostly run into external chaining and linear probing. External chaining is very popular because it is easy to implement but fails to utilize the **locality of reference**. Computers are designed to access adjacent/nearby memory locations quickly which open addressing schemes take advantage of not closed addressing schemes.
+
+The O(1) performance of HashMaps happens when there are little to no collisions so keep in mind you want to reasses if there are many collisions happening. Quadratic probing and double hashing are very fast but computer can increment faster than do math operations so linear probing will be faster.
+
+Quadratic probing and double hashing can both run into infinite probing. To avoid this the table length must be a prime number and your max load factor must be no more than 0.5. 
+
+An example of an implementation of a data structure that uses hashing is **bloom filters**.
