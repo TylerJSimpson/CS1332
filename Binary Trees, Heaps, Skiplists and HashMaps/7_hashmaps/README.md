@@ -308,7 +308,7 @@ While we tried to solve the issue of **primary clustering** we now suffer from *
 - Breaks up clusters created by linear probing
 - index = (c * h + origIndex) % backingArray.length
 - h = number of times we've probed (1,2,3...n)
-- c = result of second hash functio (linear probing if c = 1)
+- c = result of second hash function (linear probing if c = 1)
 
 First hash: H(k), used to calculate origIndex
 
