@@ -73,6 +73,10 @@ public class ExternalChainingHashMap<K, V> {
         // WRITE YOUR CODE HERE (DO NOT MODIFY METHOD HEADER)!
 
         // call resizeBackingTable when size / INITIAL_CAPACITY > MAX_LOAD_FACTOR
+        if ((size / INITIAL_CAPACITY) > MAX_LOAD_FACTOR) {
+            int length = (2 * table.length) + 1;
+            resizeBackingTable(length);
+        }
 
         // hash only keys by calling hashCode() method on the KEY not on the object itself (ExternalChainingMapEntry)
     
@@ -115,9 +119,34 @@ public class ExternalChainingHashMap<K, V> {
      * @param Length The new length of the backing table.
      */
     private void resizeBackingTable(int length) {
-        // WRITE YOUR CODE HERE (DO NOT MODIFY METHOD HEADER)!
 
-        // 2n + 1 where n is the current capacity BEFORE adding parameterized element
+        ExternalChainingMapEntry<K, V>[] oldTable = table;
+        ExternalChainingMapEntry<K, V>[] newTable = (ExternalChainingMapEntry<K, V>[]) new ExternalChainingMapEntry[length];
+
+        for (int i = 0; i < oldTable.length; i++) {
+            ExternalChainingMapEntry<K, V> curr = oldTable[i];
+            while (curr != null) {
+                K key = curr.getKey();
+                V value = curr.getValue();
+
+                // compress then hash
+                int index = Math.abs(key.hashCode()) % length;
+
+                ExternalChainingMapEntry<K, V> node = new ExternalChainingMapEntry<>(key, value);
+
+                if (newTable[index] == null) {
+                    newTable[index] = node; // no collision - add to front of chain
+                } else { // collision - add to end of chain
+                    ExternalChainingMapEntry<K, V> tail = newTable[index];
+                    while (tail.getNext() != null) {
+                        tail = tail.getNext();
+                    }
+                    tail.setNext(node);
+                }
+                curr = curr.getNext();
+            }
+        }
+        table = newTable;
     }
 
     /**
