@@ -70,19 +70,30 @@ public class ExternalChainingHashMap<K, V> {
      * @throws java.lang.IllegalArgumentException If key or value is null.
      */
     public V put(K key, V value) {
-        // WRITE YOUR CODE HERE (DO NOT MODIFY METHOD HEADER)!
 
         // call resizeBackingTable when size / INITIAL_CAPACITY > MAX_LOAD_FACTOR
-        if ((size / INITIAL_CAPACITY) > MAX_LOAD_FACTOR) {
+        if ((size + 1 / table.length) > MAX_LOAD_FACTOR) {
             int length = (2 * table.length) + 1;
             resizeBackingTable(length);
         }
 
-        // hash only keys by calling hashCode() method on the KEY not on the object itself (ExternalChainingMapEntry)
-    
-        // adding is done at the front of the chain
-        // recall no duplicate keys are allowed so replace and return old value
-        // ExternalChainingMapEntry represents the head of a linked list
+        int index = Math.abs(key.hashCode()) % table.length;
+
+        // Duplicate key
+        ExternalChainingMapEntry<K, V> curr = table[index];
+        while (curr != null) {
+            if (curr.getKey().equals(key)) {
+                V oldValue = curr.getValue();
+                curr.setValue(value);
+                return oldValue;
+            }
+            curr = curr.getNext();
+        }
+
+        // Unique key
+        table[index] = new ExteternalChainingMapEntry<>(key, value, table[index]);
+        size++;
+        return null;
     
     }
 
