@@ -71,13 +71,16 @@ public class ExternalChainingHashMap<K, V> {
      */
     public V put(K key, V value) {
 
-        // call resizeBackingTable when size / INITIAL_CAPACITY > MAX_LOAD_FACTOR
-        if ((size + 1 / table.length) > MAX_LOAD_FACTOR) {
-            int length = (2 * table.length) + 1;
-            resizeBackingTable(length);
+        if (key == null || value == null) {
+            throw new IllegalArgumentException("Key or value is null");
         }
 
-        int index = Math.abs(key.hashCode()) % table.length;
+        // call resizeBackingTable when size / INITIAL_CAPACITY > MAX_LOAD_FACTOR
+        if (((size + 1.0) / table.length) > MAX_LOAD_FACTOR) {
+            resizeBackingTable((2 * table.length) +1);
+        }
+
+        int index = (key.hashCode() & 0x7fffffff) % table.length;
 
         // Duplicate key
         ExternalChainingMapEntry<K, V> curr = table[index];
@@ -91,7 +94,7 @@ public class ExternalChainingHashMap<K, V> {
         }
 
         // Unique key
-        table[index] = new ExteternalChainingMapEntry<>(key, value, table[index]);
+        table[index] = new ExternalChainingMapEntry<>(key, value, table[index]);
         size++;
         return null;
     
@@ -106,10 +109,32 @@ public class ExternalChainingHashMap<K, V> {
      * @throws java.util.NoSuchElementException   If the key is not in the map.
      */
     public V remove(K key) {
-        // WRITE YOUR CODE HERE (DO NOT MODIFY METHOD HEADER)!
+        
+        if (key == null) {
+            throw new IllegalArgumentException("Key is null");
+        }
 
-        // remove just as we did in the singly-linked list examples treating the 1st table entry as the head
-        // if removing the only entry at that index NULL it
+        int index = (key.hashCode() & 0x7fffffff) % table.length;
+
+        ExternalChainingMapEntry<K, V> curr = table[index];
+        ExternalChainingMapEntry<K, V> prev = null;
+
+        while (curr != null) {
+            if (curr.getKey().equals(key)) {
+                V val = curr.getValue();
+                if (prev == null) {
+                    table[index] = curr.getNext();    // remove head
+                } else {
+                    prev.setNext(curr.getNext());   // unlink middle/tail
+                }
+                size--;
+                return val;
+            }
+            prev = curr;
+            curr = curr.getNext();
+        }
+
+        throw new NoSuchElementException("Key not found: " + key);
     }
 
     /**
@@ -141,7 +166,7 @@ public class ExternalChainingHashMap<K, V> {
                 V value = curr.getValue();
 
                 // compress then hash
-                int index = Math.abs(key.hashCode()) % length;
+                int index = (key.hashCode() & 0x7fffffff) % table.length;
 
                 ExternalChainingMapEntry<K, V> node = new ExternalChainingMapEntry<>(key, value);
 
