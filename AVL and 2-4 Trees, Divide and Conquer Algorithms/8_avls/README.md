@@ -180,5 +180,39 @@ Now the current node contains the data we want and `return curr` in the private 
 
 ### Introduction to AVLs
 
+AVLs are a sub classification of BSTs. They share the same order and shape properties, though AVLs have additional shape properties restricting the height of the tree.
+
+AVLs are self balancing BSTs that are used to eliminate O(n) worst case. The worst case for search/add/remove becomes O(log n).
+
+Rotations are performed on nodes that are "unbalanced".
+
+`
+Height(node) = max{Height(left), Height(right)} + 1
+`
+
+Base case: Height(leaf) = 1, Height(null) = -1
+
+`
+BalanceFactor(node) = Height(left) - Height(right)
+`
+
+BalanceFactor and Height are stored inside the node to make calculations O(1) as opposed to O(n).
+
+![](/AVL%20and%202-4%20Trees,%20Divide%20and%20Conquer%20Algorithms/8_avls/images/AVLHeightBF1.png)
+
+When calculating balance factors it is important to calculate from the bottom up since each node relies on the heights of it's children. 
+
+Node is unbalanced if |BF| > 1
+
+Node is balanced if BF = -1, 0, 1
+
+If BF is < 0 it is right heavy i.e. has more nodes in the right tree such as in node 4 in the example above with BF = -2.
+
+The goal is to minimize the depths of all nodes which minimizes the unbalance encountered in the tree. We must except some lenience i.e. `|node.balanceFactor| <= 1` because there are cases where we must unbalance the tree i.e. if it was a root with 1 child on either side no matter where we add the 4th node it will be unbalanced with a |BF| of 1.
+
+![](/AVL%20and%202-4%20Trees,%20Divide%20and%20Conquer%20Algorithms/8_avls/images/AVLLazyUpdate.png)
+
+In the example above if we tolerate no imbalance we can make a simple Add O(n). If we tolerate the standard BST addition or "Lazy update" then we save on costs. AVLs hit a sweet spot between allowing some imbalance while keeping operations efficient. The height of an AVL tree is at most 1.44log(n).
+
 ### AVL Rotations
 
