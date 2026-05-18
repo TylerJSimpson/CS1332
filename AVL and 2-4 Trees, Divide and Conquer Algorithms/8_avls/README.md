@@ -8,6 +8,8 @@
         - [BST Remove](#bst-remove)
     - [Introduction to AVLs](#introduction-to-avls)
     - [AVL Rotations](#avl-rotations)
+        - [Rotations](#rotations)
+        - [Logistics of an AVL](#logistics-of-an-avl)
 
 ## AVLs
 
@@ -216,3 +218,77 @@ In the example above if we tolerate no imbalance we can make a simple Add O(n). 
 
 ### AVL Rotations
 
+#### Rotations
+
+**Single Rotations**
+
+Rotations adjust the heights of the node without disrupting the order property. They are used to balance an AVL tree when a node is added or removed causing an imbalance. The A node has a -2 balance factor below so a simple left lotation on the -1 child below will balance the tree.
+
+![](/AVL%20and%202-4%20Trees,%20Divide%20and%20Conquer%20Algorithms/8_avls/images/AVLRotationLeft.png)
+
+Recall if a balance factor is negative then it is right heavy which we would use a left rotation.
+
+leftRotation(Node A)
+1. Node B <- A's right child
+2. A's right child <- B's left child
+3. B's left child <- A
+4. Update the height & BF of A
+5. Update the height & BF of B
+6. Return B
+
+A right rotation is similar but for example in the case above if the tree was flipped you would see a balance factor of 2 on the main parent node and the left child would have a balance factor of 1 denoting a right rotation is needed.
+
+rightRotation(Node C)
+1. Node B <- C's left child
+2. C's left child <- B's right child
+3. B's left child <- C
+4. Update the height & BF of C
+5. Update the height & BF of B
+6. Return B
+
+![](/AVL%20and%202-4%20Trees,%20Divide%20and%20Conquer%20Algorithms/8_avls/images/AVLRotateRemoveEx.png)
+
+![](/AVL%20and%202-4%20Trees,%20Divide%20and%20Conquer%20Algorithms/8_avls/images/AVLRotateRemoveEx2.png)
+
+![](/AVL%20and%202-4%20Trees,%20Divide%20and%20Conquer%20Algorithms/8_avls/images/AVLRotateRemoveEx3.png)
+
+![](/AVL%20and%202-4%20Trees,%20Divide%20and%20Conquer%20Algorithms/8_avls/images/AVLRotateRemoveEx4.png)
+
+**Double Rotations**
+
+Single rotations are for simple imbalances in an AVL tree. For more complex imbalances we need to use double rotations which are denoted by balance factors.
+
+![](/AVL%20and%202-4%20Trees,%20Divide%20and%20Conquer%20Algorithms/8_avls/images/AVLDoubleRotations1.png)
+
+Previously we would see balance factors of the parent and child in the same direction i.e. -2 and -1 respectively.
+
+In the **Right-Left** rotation example we see a parent balance factor of -2 but a positive 1 balance factor for the imbalanced child. 
+
+![](/AVL%20and%202-4%20Trees,%20Divide%20and%20Conquer%20Algorithms/8_avls/images/AVLDoubleRotations2.png)
+
+Similarly there is a **Left-Right** where the parent balance factor is 2 but a -1 balance factor for the imbalanced child.
+
+In this example we add 54 to the AVL tree as usual.
+
+![](/AVL%20and%202-4%20Trees,%20Divide%20and%20Conquer%20Algorithms/8_avls/images/AVLDoubleRotations4.png)
+
+![](/AVL%20and%202-4%20Trees,%20Divide%20and%20Conquer%20Algorithms/8_avls/images/AVLDoubleRotations5.png)
+
+Then we recalculate the heights and balance factors. We see -2 on node 50 with the right child have a balance factor of 1 which denotes needing to balance with a **Right-Left** rotation.
+
+![](/AVL%20and%202-4%20Trees,%20Divide%20and%20Conquer%20Algorithms/8_avls/images/AVLDoubleRotations6.png)
+
+![](/AVL%20and%202-4%20Trees,%20Divide%20and%20Conquer%20Algorithms/8_avls/images/AVLDoubleRotations7.png)
+
+![](/AVL%20and%202-4%20Trees,%20Divide%20and%20Conquer%20Algorithms/8_avls/images/AVLDoubleRotations8.png)
+
+Rotation reference table:
+
+![](/AVL%20and%202-4%20Trees,%20Divide%20and%20Conquer%20Algorithms/8_avls/images/AVLDoubleRotations3.png)
+
+
+#### Logistics of an AVL
+
+Each rotations is O(1). We know the maximum number of rotations can be at most O(log(n)) because the height of the tree is O(log(n)). Each add operation will trigger at most 1 rotation and any remove operation can trigger O(log(n)) in the worst case.
+
+There are some caveats to AVL vs BST. If an operation would modify the tree structure in some way, then it may be harder to do in an AVL since we must maintain proper balance by the end of the operations. 
